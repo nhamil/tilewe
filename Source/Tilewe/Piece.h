@@ -124,11 +124,11 @@ Tw_DEFINE_BITSET(RotPcConSet, Tw_RotPcConSet_NumBitsetInts, 0x1FFFFFFFFFFFFFULL)
 /**
  * Loops over all rotation-piece-contacts in a set. 
  */
-#define Tw_RotPcConSet_FOR_EACH(rpcSet, action) \
+#define Tw_RotPcConSet_FOR_EACH(rpcSet, rpcVar, action) \
     { \
-        Tw_RotPcConSet _forEachRotPcConTmp = rpcSet; \
-        Tw_RotPcCon rpc; \
-        while ((rpc = Tw_RotPcConSet_RemoveFirst(&_forEachRotPcConTmp)) != (Tw_RotPcCon) -1) \
+        Tw_RotPcConSet _forEachRotPcConSet##rpcVar = rpcSet; \
+        Tw_RotPcCon rpcVar; \
+        while ((rpcVar = Tw_RotPcConSet_RemoveFirst(&_forEachRotPcConSet##rpcVar)) != (Tw_RotPcCon) -1) \
         { \
             action; \
         } \
@@ -311,7 +311,7 @@ static inline void Tw_RotPcConSetMap_ClearFromTile(Tw_RotPcConSetMap* map, Tw_Ti
  */
 static inline void Tw_RotPcConSetMap_DifferenceFromAll(Tw_RotPcConSetMap* map, const Tw_RotPcConSet* remove) 
 {
-    Tw_TileSet_FOR_EACH(map->Keys, 
+    Tw_TileSet_FOR_EACH(map->Keys, tile, 
     {
         Tw_RotPcConSet_Difference(&map->Sets[tile], remove); 
         if (!Tw_RotPcConSet_Any(&map->Sets[tile])) 

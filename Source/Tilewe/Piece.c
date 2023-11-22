@@ -126,7 +126,7 @@ static void Tw_RegRotPc(Tw_RotPc rp, const Tw_TileSet* tiles, Tw_RotPc unique)
     int x, y; 
 
     // find contacts 
-    Tw_TileSet_FOR_EACH(info->Tiles, 
+    Tw_TileSet_FOR_EACH(info->Tiles, tile, 
     {
         Tw_Tile_ToCoords(tile, &x, &y); 
 
@@ -150,7 +150,7 @@ static void Tw_RegRotPc(Tw_RotPc rp, const Tw_TileSet* tiles, Tw_RotPc unique)
     static int AdjY[] = {  0, 0, -1, 1 }; 
 
     // find adjacents 
-    Tw_TileSet_FOR_EACH(info->Tiles, 
+    Tw_TileSet_FOR_EACH(info->Tiles, tile, 
     {
         Tw_Tile_ToCoords(tile, &x, &y); 
 
@@ -174,7 +174,7 @@ static void Tw_RegRotPc(Tw_RotPc rp, const Tw_TileSet* tiles, Tw_RotPc unique)
     static int CornerY[] = { -1, -1,  1, 1 }; 
 
     // find corners 
-    Tw_TileSet_FOR_EACH(info->Tiles, 
+    Tw_TileSet_FOR_EACH(info->Tiles, tile, 
     {
         Tw_Tile_ToCoords(tile, &x, &y); 
 
@@ -200,7 +200,7 @@ static void Tw_RegRotPc(Tw_RotPc rp, const Tw_TileSet* tiles, Tw_RotPc unique)
 
     // create rot pc cons if this rotation is unique
     Tw_InitRotPcConSet(&info->RotPcCons); 
-    Tw_TileSet_FOR_EACH(info->Contacts, 
+    Tw_TileSet_FOR_EACH(info->Contacts, tile, 
     {
         Tw_RotPcConSet_Add(&info->RotPcCons, Tw_RegRotPcCon(rp, tile)); 
     }); 
@@ -263,7 +263,7 @@ static void Tw_SetRelTileInfo(Tw_Tile rel)
 
         Tw_Tile_ToCoords(rpcInfo->Offset, &rpcx, &rpcy); 
 
-        Tw_TileSet_FOR_EACH(rpInfo->Tiles, 
+        Tw_TileSet_FOR_EACH(rpInfo->Tiles, tile, 
         {
             Tw_Tile_ToCoords(tile, &tx, &ty); 
             rt = Tw_MakeRelTile(tx - rpcx, ty - rpcy); 
@@ -273,7 +273,7 @@ static void Tw_SetRelTileInfo(Tw_Tile rel)
             }
         });
 
-        Tw_TileSet_FOR_EACH(rpInfo->RelAdjacents, 
+        Tw_TileSet_FOR_EACH(rpInfo->RelAdjacents, tile, 
         {
             Tw_Tile_ToRelCoords(tile, &tx, &ty); 
             rt = Tw_MakeRelTile(tx - rpcx, ty - rpcy); 

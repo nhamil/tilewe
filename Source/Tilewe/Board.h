@@ -124,7 +124,7 @@ static inline void Tw_InitPlayerState(Tw_PlayerState* state, const Tw_Player* pl
     state->RotPcCons = player->RotPcCons; 
 
     // save available pieces for open tiles 
-    Tw_TileSet_FOR_EACH(player->OpenCorners.Keys, 
+    Tw_TileSet_FOR_EACH(player->OpenCorners.Keys, tile, 
     {
         Tw_ChangedCornerList_PushPtr(&state->Corners, &player->OpenCorners.Sets[tile]); 
         Tw_ChangedCornerTileList_Push(&state->CornerTiles, tile); 
@@ -215,7 +215,7 @@ static inline void Tw_Player_OnTilesFilled(Tw_Player* player, const Tw_TileList*
 {
     Tw_RotPcConSet invalid; 
     int cx, cy, fx, fy, dx, dy; 
-    Tw_TileSet_FOR_EACH(player->OpenCorners.Keys, 
+    Tw_TileSet_FOR_EACH(player->OpenCorners.Keys, tile, 
     {
         Tw_Tile_ToCoords(tile, &cx, &cy); 
         Tw_InitRotPcConSet(&invalid); 
@@ -425,7 +425,7 @@ static inline void Tw_Board_Push(Tw_Board* board, Tw_Move move)
     Tw_Tile_ToCoords(rpcInfo->Offset, &ox, &oy); 
 
     // add new possible corners to current player 
-    Tw_TileSet_FOR_EACH(rotInfo->RelCorners, 
+    Tw_TileSet_FOR_EACH(rotInfo->RelCorners, tile, 
     {
         Tw_Tile_ToRelCoords(tile, &rx, &ry); 
         
@@ -456,7 +456,7 @@ static inline void Tw_Board_Push(Tw_Board* board, Tw_Move move)
 
     // player can't place tiles adjacent to their own color 
     Tw_InitTileList(&tilesFilled); 
-    Tw_TileSet_FOR_EACH(rotInfo->RelAdjacents, 
+    Tw_TileSet_FOR_EACH(rotInfo->RelAdjacents, tile, 
     {
         Tw_Tile_ToRelCoords(tile, &rx, &ry); 
         
@@ -496,9 +496,9 @@ static inline int Tw_Board_NumMovesForPlayer(const Tw_Board* board, Tw_Color for
     const Tw_Player* player = &board->Players[forPlayer]; 
     int total = 0; 
 
-    Tw_TileSet_FOR_EACH(player->OpenCorners.Keys, 
+    Tw_TileSet_FOR_EACH(player->OpenCorners.Keys, tile, 
     {
-        Tw_RotPcConSet_FOR_EACH(player->OpenCorners.Sets[tile], 
+        Tw_RotPcConSet_FOR_EACH(player->OpenCorners.Sets[tile], rpc, 
         {
             total++; 
         });
@@ -529,9 +529,9 @@ static inline void Tw_Board_GenMovesForPlayer(const Tw_Board* board, Tw_Color fo
 {
     const Tw_Player* player = &board->Players[forPlayer]; 
 
-    Tw_TileSet_FOR_EACH(player->OpenCorners.Keys, 
+    Tw_TileSet_FOR_EACH(player->OpenCorners.Keys, tile, 
     {
-        Tw_RotPcConSet_FOR_EACH(player->OpenCorners.Sets[tile], 
+        Tw_RotPcConSet_FOR_EACH(player->OpenCorners.Sets[tile], rpc, 
         {
             Tw_MoveList_Push(moves, Tw_MakeMoveFromRotPcCon(rpc, tile)); 
         });
@@ -594,7 +594,7 @@ static inline void Tw_Board_ToStr(const Tw_Board* board, char* out)
         len += sprintf(out + len, "%6s ", Tw_Color_Str(col)); 
 
         len += sprintf(out + len, "Corners: [ "); 
-        Tw_TileSet_FOR_EACH(board->Players[col].OpenCorners.Keys, 
+        Tw_TileSet_FOR_EACH(board->Players[col].OpenCorners.Keys, tile, 
         {
             len += sprintf(out + len, "%s ", Tw_Tile_Str(tile)); 
         });
