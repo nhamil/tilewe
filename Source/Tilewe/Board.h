@@ -498,7 +498,7 @@ static inline int Tw_Board_NumMovesForPlayer(const Tw_Board* board, Tw_Color for
 
     Tw_TileSet_FOR_EACH(player->OpenCorners.Keys, tile, 
     {
-        Tw_RotPcConSet_FOR_EACH(player->OpenCorners.Sets[tile], 
+        Tw_RotPcConSet_FOR_EACH(player->OpenCorners.Sets[tile], rpc, 
         {
             total++; 
         });
@@ -531,7 +531,7 @@ static inline void Tw_Board_GenMovesForPlayer(const Tw_Board* board, Tw_Color fo
 
     Tw_TileSet_FOR_EACH(player->OpenCorners.Keys, tile, 
     {
-        Tw_RotPcConSet_FOR_EACH(player->OpenCorners.Sets[tile], 
+        Tw_RotPcConSet_FOR_EACH(player->OpenCorners.Sets[tile], rpc, 
         {
             Tw_MoveList_Push(moves, Tw_MakeMoveFromRotPcCon(rpc, tile)); 
         });
