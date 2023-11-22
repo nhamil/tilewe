@@ -13,6 +13,8 @@ void Tw_Init(void);
 
 #define Tw_MaxBoardDepth 84
 
+#define Tw_BoardStrSize 8192
+
 Tw_DEFINE_STACK_LIST(ChangedCornerList, Tw_RotPcConSet, 128)
 Tw_DEFINE_STACK_LIST(ChangedCornerTileList, Tw_Tile, 128)
 
@@ -512,11 +514,14 @@ static inline void Tw_Board_GenMoves(const Tw_Board* board, Tw_MoveList* moves)
 }
 
 /**
- * Print the board state. 
+ * Gets the string representation of a board. 
+ * 
+ * Note that the buffer must hold at least `Tw_BoardStrSize` bytes. 
  * 
  * @param board Board
+ * @param out Output buffer
  */
-static inline void Tw_Board_Print(const Tw_Board* board) 
+static inline void Tw_Board_ToStr(const Tw_Board* board, char* out) 
 {
     static const char* Chars[] = 
     {
@@ -527,39 +532,53 @@ static inline void Tw_Board_Print(const Tw_Board* board)
         "."
     };
 
+    int len = 0; 
+
     for (int y = Tw_BoardHeight - 1; y >= 0; y--) 
     {
-        printf("%2d ", y + 1); 
+        len += sprintf(out + len, "%2d ", y + 1); 
         for (int x = 0; x < Tw_BoardWidth; x++) 
         {
-            printf("%s ", Chars[Tw_Board_ColorAt(board, Tw_MakeTile(x, y))]); 
+            len += sprintf(out + len, "%s ", Chars[Tw_Board_ColorAt(board, Tw_MakeTile(x, y))]); 
         }
-        printf("\n"); 
+        len += sprintf(out + len, "\n"); 
     }
-    printf("   "); 
+    len += sprintf(out + len, "   "); 
     for (int x = 0; x < Tw_BoardWidth; x++) 
     {
-        printf("%c ", 'a' + x); 
+        len += sprintf(out + len, "%c ", 'a' + x); 
     }
-    printf("\n"); 
+    len += sprintf(out + len, "\n"); 
 
-    printf("Turn: %s\n", Tw_Color_Str(board->CurTurn)); 
-    printf("Ply: %d\n", board->Ply); 
+    len += sprintf(out + len, "Turn: %s\n", Tw_Color_Str(board->CurTurn)); 
+    len += sprintf(out + len, "Ply: %d\n", board->Ply); 
 
     for (Tw_Color col = Tw_Color_First; col < (Tw_Color) board->NumPlayers; col++) 
     {
-        printf("%6s ", Tw_Color_Str(col)); 
+        len += sprintf(out + len, "%6s ", Tw_Color_Str(col)); 
 
-        printf("Corners: [ "); 
+        len += sprintf(out + len, "Corners: [ "); 
         Tw_TileSet_FOR_EACH(board->Players[col].OpenCorners.Keys, 
         {
-            printf("%s ", Tw_Tile_Str(tile)); 
+            len += sprintf(out + len, "%s ", Tw_Tile_Str(tile)); 
         });
-        printf("]"); 
+        len += sprintf(out + len, "]"); 
 
 
-        printf("\n"); 
+        len += sprintf(out + len, "\n"); 
     }
+}
+
+/**
+ * Print the board state. 
+ * 
+ * @param board Board
+ */
+static inline void Tw_Board_Print(const Tw_Board* board) 
+{
+    char buf[Tw_BoardStrSize]; 
+    Tw_Board_ToStr(board, buf); 
+    printf("%s", buf); 
 }
 
 /**
