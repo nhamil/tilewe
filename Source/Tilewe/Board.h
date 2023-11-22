@@ -483,6 +483,40 @@ static inline void Tw_Board_Push(Tw_Board* board, Tw_Move move)
 }
 
 /**
+ * Get number of legal moves as if the specified player is up to play. 
+ * 
+ * @param board Board
+ * @param forPlayer Player to generate moves for
+ * @return Number of legal moves 
+ */
+static inline int Tw_Board_NumMovesForPlayer(const Tw_Board* board, Tw_Color forPlayer) 
+{
+    const Tw_Player* player = &board->Players[forPlayer]; 
+    int total = 0; 
+
+    Tw_TileSet_FOR_EACH(player->OpenCorners.Keys, 
+    {
+        Tw_RotPcConSet_FOR_EACH(player->OpenCorners.Sets[tile], 
+        {
+            total++; 
+        });
+    });
+
+    return total; 
+}
+
+/**
+ * Get number of legal moves for the current player. 
+ * 
+ * @param board Board
+ * @return Number of legal moves 
+ */
+static inline int Tw_Board_NumMoves(const Tw_Board* board) 
+{
+    return Tw_Board_NumMovesForPlayer(board, board->CurTurn); 
+}
+
+/**
  * Get all legal moves as if the specified player is up to play. 
  * 
  * @param board Board
