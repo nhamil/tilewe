@@ -67,6 +67,7 @@ struct Tw_BoardState
 {
     Tw_TileSet All; 
     Tw_Color CurTurn; 
+    Tw_Move Move; 
 };
 
 typedef struct Tw_Board Tw_Board; 
@@ -407,7 +408,8 @@ static inline void Tw_Board_Push(Tw_Board* board, Tw_Move move)
     board->History[board->Ply] = (Tw_BoardState) 
     {
         .All = board->All, 
-        .CurTurn = board->CurTurn
+        .CurTurn = board->CurTurn, 
+        .Move = move
     };
 
     Tw_RotPcCon rpc = Tw_Move_RotPcCon(move); 
