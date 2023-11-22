@@ -311,7 +311,7 @@ static inline void Tw_RotPcConSetMap_ClearFromTile(Tw_RotPcConSetMap* map, Tw_Ti
  */
 static inline void Tw_RotPcConSetMap_DifferenceFromAll(Tw_RotPcConSetMap* map, const Tw_RotPcConSet* remove) 
 {
-    Tw_TileSet_FOR_EACH(map->Keys, 
+    Tw_TileSet_FOR_EACH(map->Keys, tile, 
     {
         Tw_RotPcConSet_Difference(&map->Sets[tile], remove); 
         if (!Tw_RotPcConSet_Any(&map->Sets[tile])) 

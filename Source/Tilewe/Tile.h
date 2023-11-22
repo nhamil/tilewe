@@ -81,11 +81,11 @@ Tw_DEFINE_BITSET(TileSet, Tw_TileSet_NumBitsetInts, 0xFFFFULL)
 /**
  * Iterates over every tile in the set. 
  */
-#define Tw_TileSet_FOR_EACH(tileSet, action) \
+#define Tw_TileSet_FOR_EACH(tileSet, tileVar, action) \
     { \
-        Tw_TileSet _forEachTileTmp = tileSet; \
-        Tw_Tile tile; \
-        while ((tile = Tw_TileSet_RemoveFirst(&_forEachTileTmp)) != (Tw_Tile) -1) \
+        Tw_TileSet _forEachTileSet##tileVar = tileSet; \
+        Tw_Tile tileVar; \
+        while ((tileVar = Tw_TileSet_RemoveFirst(&_forEachTileSet##tileVar)) != (Tw_Tile) -1) \
         { \
             action; \
         } \
@@ -244,7 +244,7 @@ static inline bool Tw_RelCoordsInBounds(int x, int y)
  */
 static inline void Tw_TileSet_AddToTileList(const Tw_TileSet* set, Tw_TileList* list) 
 {
-    Tw_TileSet_FOR_EACH(*set, 
+    Tw_TileSet_FOR_EACH(*set, tile, 
     {
         Tw_TileList_Push(list, tile); 
     }); 
