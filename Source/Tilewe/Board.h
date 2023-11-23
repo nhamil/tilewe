@@ -508,6 +508,23 @@ static inline int Tw_Board_NumMovesForPlayer(const Tw_Board* board, Tw_Color for
 }
 
 /**
+ * Checks if a move is legal given the current board state, as if the specified
+ * player is to move.  
+ * 
+ * @param board Board
+ * @param forPlayer Player to check legality for 
+ * @param move Move
+ * @return Whether the move is legal 
+ */
+static inline bool Tw_Board_IsLegalForPlayer(const Tw_Board* board, Tw_Color forPlayer, Tw_Move move) 
+{
+    Tw_RotPcCon rpc = Tw_Move_RotPcCon(move); 
+    Tw_Tile target = Tw_Move_ToTile(move); 
+
+    return rpc < Tw_NumRotPcCons && Tw_Tile_InBounds(target) && Tw_RotPcConSet_Has(&board->Players[forPlayer].OpenCorners.Sets[target], rpc); 
+}
+
+/**
  * Checks if a move is legal given the current board state. 
  * 
  * @param board Board
@@ -516,10 +533,7 @@ static inline int Tw_Board_NumMovesForPlayer(const Tw_Board* board, Tw_Color for
  */
 static inline bool Tw_Board_IsLegal(const Tw_Board* board, Tw_Move move) 
 {
-    Tw_RotPcCon rpc = Tw_Move_RotPcCon(move); 
-    Tw_Tile target = Tw_Move_ToTile(move); 
-
-    return rpc < Tw_NumRotPcCons && Tw_Tile_InBounds(target) && Tw_RotPcConSet_Has(&board->Players[board->CurTurn].OpenCorners.Sets[target], rpc); 
+    return Tw_Board_IsLegalForPlayer(board, board->CurTurn, move); 
 }
 
 /**
