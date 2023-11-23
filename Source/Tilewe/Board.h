@@ -508,6 +508,21 @@ static inline int Tw_Board_NumMovesForPlayer(const Tw_Board* board, Tw_Color for
 }
 
 /**
+ * Checks if a move is legal given the current board state. 
+ * 
+ * @param board Board
+ * @param move Move
+ * @return Whether the move is legal 
+ */
+static inline bool Tw_Board_IsLegal(const Tw_Board* board, Tw_Move move) 
+{
+    Tw_RotPcCon rpc = Tw_Move_RotPcCon(move); 
+    Tw_Tile target = Tw_Move_ToTile(move); 
+
+    return rpc < Tw_NumRotPcCons && Tw_Tile_InBounds(target) && Tw_RotPcConSet_Has(&board->Players[board->CurTurn].OpenCorners.Sets[target], rpc); 
+}
+
+/**
  * Get number of legal moves for the current player. 
  * 
  * @param board Board

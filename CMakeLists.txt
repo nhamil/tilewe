@@ -40,5 +40,5 @@ set(SOURCES
 
 add_library(tilewe STATIC ${SOURCES})
 
-add_executable(testboard Source/Test/TestBoard.c)
-target_link_libraries(testboard tilewe -static)
+add_executable(test Source/Test/Test.c)
+target_link_libraries(test tilewe -static)

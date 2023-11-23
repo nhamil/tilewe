@@ -169,6 +169,96 @@ TEST_CASE(PlayerCorners,
     }
 })
 
+TEST_CASE(IsLegal, 
+{
+    Tw_Board board; 
+    Tw_InitBoard(&board, 4); 
+
+    TEST_EXPECT_EQ(
+        Tw_Board_IsLegal(&board, Tw_NoMove), 
+        false
+    );
+
+    TEST_EXPECT_EQ(
+        Tw_Board_IsLegal(&board, Tw_MakeMove(
+            Tw_Pc_F5, 
+            Tw_Rot_N, 
+            Tw_Tile_A02, 
+            Tw_Tile_A01
+        )), 
+        false
+    ); 
+
+    TEST_EXPECT_EQ(
+        Tw_Board_IsLegal(&board, Tw_MakeMove(
+            Tw_Pc_F5, 
+            Tw_Rot_N, 
+            Tw_Tile_A02, 
+            Tw_Tile_A02
+        )), 
+        false
+    ); 
+
+    TEST_EXPECT_EQ(
+        Tw_Board_IsLegal(&board, Tw_MakeMove(
+            Tw_Pc_F5, 
+            Tw_Rot_S, 
+            Tw_Tile_B01, 
+            Tw_Tile_A01
+        )), 
+        false
+    ); 
+
+    TEST_EXPECT_EQ(
+        Tw_Board_IsLegal(&board, Tw_MakeMove(
+            Tw_Pc_F5, 
+            Tw_Rot_S, 
+            Tw_Tile_A01, 
+            Tw_Tile_A01
+        )), 
+        true
+    ); 
+})
+
+TEST_CASE(MakeMove, 
+{
+    // contact not in piece 
+    TEST_EXPECT_EQ(
+        Tw_MakeMove_Safe(Tw_Pc_F5, Tw_Rot_N, Tw_Tile_A01, Tw_Tile_A01), 
+        Tw_NoMove
+    );
+
+    // contact not valid 
+    TEST_EXPECT_EQ(
+        Tw_MakeMove_Safe(Tw_Pc_F5, Tw_Rot_N, Tw_Tile_B02, Tw_Tile_A01), 
+        Tw_NoMove
+    );
+
+    // invalid piece
+    TEST_EXPECT_EQ(
+        Tw_MakeMove_Safe(Tw_Pc_F5 + 100, Tw_Rot_N, Tw_Tile_B01, Tw_Tile_B01), 
+        Tw_NoMove
+    );
+
+    // invalid rotation
+    TEST_EXPECT_EQ(
+        Tw_MakeMove_Safe(Tw_Pc_F5, Tw_Rot_N + 100, Tw_Tile_B01, Tw_Tile_B01), 
+        Tw_NoMove
+    );
+
+    // invalid target tile 
+    TEST_EXPECT_EQ(
+        Tw_MakeMove_Safe(Tw_Pc_F5, Tw_Rot_N, Tw_Tile_B01, Tw_Tile_B01 + 1000), 
+        Tw_NoMove
+    );
+
+    // valid
+    TEST_EXPECT_NEQ(
+        Tw_MakeMove_Safe(Tw_Pc_F5, Tw_Rot_N, Tw_Tile_B01, Tw_Tile_B01), 
+        Tw_NoMove
+    );
+})
+
 TEST_MAIN(TestBoard, 
 {
     Tw_Init(); 
@@ -179,4 +269,6 @@ TEST_MAIN(TestBoard,
     TEST_RUN(NoMovesIffBoardIsFinished); 
     TEST_RUN(PlayerPcs); 
     TEST_RUN(PlayerCorners); 
+    TEST_RUN(IsLegal); 
+    TEST_RUN(MakeMove); 
 })
