@@ -10,7 +10,7 @@
  */
 typedef Tw_UInt32 Tw_Move; 
 
-#define Tw_Move_None ((Tw_Move) -1)
+#define Tw_NoMove ((Tw_Move) -1)
 
 /**
  * @param rpc Rotation-piece-contact
@@ -26,15 +26,45 @@ static inline Tw_Move Tw_MakeMoveFromRotPcCon(Tw_RotPcCon rpc, Tw_Tile toTile)
  * Convenience constructor to build move from a piece, rotation, contact, and
  * target tile. 
  * 
+ * The piece, rotation, contact must be a valid combination. 
+ * The target tile must be in bounds. 
+ * 
  * @param pc Piece
  * @param rot Rotation
  * @param con Contact
  * @param toTile Target tile
- * @return 
+ * @return The move 
  */
 static inline Tw_Move Tw_MakeMove(Tw_Pc pc, Tw_Rot rot, Tw_Tile con, Tw_Tile toTile) 
 {
     return Tw_MakeMoveFromRotPcCon(Tw_RotPcInfos[Tw_ToRotPc(pc, rot)].ToRotPcCon[con], toTile); 
+}
+
+/**
+ * Convenience constructor to build move from a piece, rotation, contact, and
+ * target tile. 
+ * 
+ * If any of the parameters would cause the move to be invalid then it returns
+ * `Tw_NoMove`.
+ * 
+ * @param pc Piece
+ * @param rot Rotation
+ * @param con Contact
+ * @param toTile Target tile
+ * @return The move 
+ */
+static inline Tw_Move Tw_MakeMove_Safe(Tw_Pc pc, Tw_Rot rot, Tw_Tile con, Tw_Tile toTile) 
+{
+    if (pc < 0 || pc >= Tw_NumPcs || 
+        rot < 0 || rot >= Tw_NumRots ||
+        !Tw_Tile_InBounds(con) ||
+        !Tw_Tile_InBounds(toTile) ||
+        !Tw_TileSet_Has(&Tw_RotPcInfos[Tw_ToRotPc(pc, rot)].Contacts, con))
+    {
+        return Tw_NoMove; 
+    }
+
+    return Tw_MakeMove(pc, rot, con, toTile); 
 }
 
 /**

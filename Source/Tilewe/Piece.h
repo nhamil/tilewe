@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "Bits.h" 
+#include "StackList.h"
 #include "Tile.h" 
 #include "Types.h"
 
@@ -42,6 +43,8 @@ typedef enum Tw_Pc
 
     Tw_Pc_None = Tw_NumPcs
 } Tw_Pc; 
+
+Tw_DEFINE_STACK_LIST(PcList, Tw_Pc, Tw_NumPcs)
 
 /**
  * Piece string. 
