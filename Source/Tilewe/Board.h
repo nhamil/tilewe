@@ -579,74 +579,6 @@ static inline void Tw_Board_GenMoves(const Tw_Board* board, Tw_MoveList* moves)
 }
 
 /**
- * Gets the string representation of a board. 
- * 
- * Note that the buffer must hold at least `Tw_BoardStrSize` bytes. 
- * 
- * @param board Board
- * @param out Output buffer
- */
-static inline void Tw_Board_ToStr(const Tw_Board* board, char* out) 
-{
-    static const char* Chars[] = 
-    {
-        "\033[94mB\033[0m", 
-        "\033[93mY\033[0m", 
-        "\033[91mR\033[0m", 
-        "\033[92mG\033[0m", 
-        "."
-    };
-
-    int len = 0; 
-
-    for (int y = Tw_BoardHeight - 1; y >= 0; y--) 
-    {
-        len += sprintf(out + len, "%2d ", y + 1); 
-        for (int x = 0; x < Tw_BoardWidth; x++) 
-        {
-            len += sprintf(out + len, "%s ", Chars[Tw_Board_ColorAt(board, Tw_MakeTile(x, y))]); 
-        }
-        len += sprintf(out + len, "\n"); 
-    }
-    len += sprintf(out + len, "   "); 
-    for (int x = 0; x < Tw_BoardWidth; x++) 
-    {
-        len += sprintf(out + len, "%c ", 'a' + x); 
-    }
-    len += sprintf(out + len, "\n"); 
-
-    len += sprintf(out + len, "Turn: %s\n", Tw_Color_Str(board->CurTurn)); 
-    len += sprintf(out + len, "Ply: %d\n", board->Ply); 
-
-    for (Tw_Color col = Tw_Color_First; col < (Tw_Color) board->NumPlayers; col++) 
-    {
-        len += sprintf(out + len, "%6s ", Tw_Color_Str(col)); 
-
-        len += sprintf(out + len, "Corners: [ "); 
-        Tw_TileSet_FOR_EACH(board->Players[col].OpenCorners.Keys, tile, 
-        {
-            len += sprintf(out + len, "%s ", Tw_Tile_Str(tile)); 
-        });
-        len += sprintf(out + len, "]"); 
-
-
-        len += sprintf(out + len, "\n"); 
-    }
-}
-
-/**
- * Print the board state. 
- * 
- * @param board Board
- */
-static inline void Tw_Board_Print(const Tw_Board* board) 
-{
-    char buf[Tw_BoardStrSize]; 
-    Tw_Board_ToStr(board, buf); 
-    printf("%s", buf); 
-}
-
-/**
  * Initialize the board. It does not have to be deinitialized. 
  * 
  * @param board Board
@@ -739,4 +671,82 @@ static inline void Tw_Board_PlayerCorners(const Tw_Board* board, Tw_Color col, T
     {
         Tw_TileList_Push(out, tile); 
     });
+}
+
+/**
+ * Gets the string representation of a board. 
+ * 
+ * Note that the buffer must hold at least `Tw_BoardStrSize` bytes. 
+ * 
+ * @param board Board
+ * @param out Output buffer
+ */
+static inline void Tw_Board_ToStr(const Tw_Board* board, char* out) 
+{
+    static const char* Chars[] = 
+    {
+        "\033[94mB\033[0m", 
+        "\033[93mY\033[0m", 
+        "\033[91mR\033[0m", 
+        "\033[92mG\033[0m", 
+        "."
+    };
+
+    int len = 0; 
+
+    for (int y = Tw_BoardHeight - 1; y >= 0; y--) 
+    {
+        len += sprintf(out + len, "%2d ", y + 1); 
+        for (int x = 0; x < Tw_BoardWidth; x++) 
+        {
+            len += sprintf(out + len, "%s ", Chars[Tw_Board_ColorAt(board, Tw_MakeTile(x, y))]); 
+        }
+        len += sprintf(out + len, "\n"); 
+    }
+    len += sprintf(out + len, "   "); 
+    for (int x = 0; x < Tw_BoardWidth; x++) 
+    {
+        len += sprintf(out + len, "%c ", 'a' + x); 
+    }
+    len += sprintf(out + len, "\n"); 
+
+    for (Tw_Color col = Tw_Color_First; col < (Tw_Color) board->NumPlayers; col++) 
+    {
+        len += sprintf(out + len, "%s ", Chars[col]); 
+
+        len += sprintf(out + len, "%2d [ ", board->Players[col].Score); 
+        Tw_PcList pcs; 
+        Tw_InitPcList(&pcs); 
+        Tw_Board_PlayerPcs(board, col, &pcs); 
+        for (int i = 0; i < pcs.Count; i++) 
+        {
+            len += sprintf(out + len, "%s ", Tw_Pc_Str(pcs.Elements[i])); 
+        }
+        len += sprintf(out + len, "]"); 
+
+
+        len += sprintf(out + len, "\n"); 
+    }
+
+    len += sprintf(out + len, "Ply: %d, ", board->Ply); 
+    if (board->Finished) 
+    {
+        len += sprintf(out + len, "Turn: done\n"); 
+    }
+    else 
+    {
+        len += sprintf(out + len, "Turn: %s\n", Tw_Color_Str(board->CurTurn)); 
+    }
+}
+
+/**
+ * Print the board state. 
+ * 
+ * @param board Board
+ */
+static inline void Tw_Board_Print(const Tw_Board* board) 
+{
+    char buf[Tw_BoardStrSize]; 
+    Tw_Board_ToStr(board, buf); 
+    printf("%s", buf); 
 }

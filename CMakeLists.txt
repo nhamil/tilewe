@@ -42,3 +42,6 @@ add_library(tilewe STATIC ${SOURCES})
 
 add_executable(test Source/Test/Test.c)
 target_link_libraries(test tilewe -static)
+
+add_executable(randomgame Source/Test/RandomGame.c)
+target_link_libraries(randomgame tilewe -static)
